@@ -2,7 +2,7 @@ class ApiConstants {
   static const String baseUrl = 'https://api.thedogapi.com/v1';
   
   // Puedes reemplazar esta API Key por la tuya si la tienes
-  static const String apiKey = '';
+  static const String apiKey = 'live_fkuHKaT5APlCEnJbVf45VAL25f1Gj0XIEby3AB8SuJriGuHMI7WTJj0rQW6xIAPW';
 
   static Map<String, String> get headers => {
     'Content-Type': 'application/json',
