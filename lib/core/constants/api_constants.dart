@@ -1,8 +1,12 @@
 class ApiConstants {
   static const String baseUrl = 'https://api.thedogapi.com/v1';
   
-  // Puedes reemplazar esta API Key por la tuya si la tienes
-  static const String apiKey = 'live_fkuHKaT5APlCEnJbVf45VAL25f1Gj0XIEby3AB8SuJriGuHMI7WTJj0rQW6xIAPW';
+  // Se obtiene la API Key en tiempo de compilación con --dart-define=DOG_API_KEY=tu_llave
+  // Si no se especifica, se utiliza la llave por defecto para el desarrollo local
+  static const String apiKey = String.fromEnvironment(
+    'DOG_API_KEY',
+    defaultValue: '',
+  );
 
   static Map<String, String> get headers => {
     'Content-Type': 'application/json',

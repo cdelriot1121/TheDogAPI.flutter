@@ -1,0 +1,62 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # O la rama por defecto que utilices
+  workflow_dispatch: # Permite ejecutar el flujo manualmente desde GitHub
+
+# Establece los permisos del GITHUB_TOKEN para permitir la implementación en GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Permite una sola implementación simultánea
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Web Application
+        # Usamos github.event.repository.name de forma dinámica para establecer el --base-href exacto.
+        # Esto es perfecto para repositorios normales del tipo: https://usuario.github.io/nombre-repositorio/
+        # Inyectamos la API Key de forma segura con --dart-define.
+        run: |
+          flutter build web --release --base-href "/${{ github.event.repository.name }}/" --dart-define=DOG_API_KEY="${{ secrets.DOG_API_KEY }}"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'build/web'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
