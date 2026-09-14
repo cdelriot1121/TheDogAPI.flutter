@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../data/models/breed_model.dart';
 
+import '../../../../core/utils/image_helper.dart';
+
 class DogCard extends StatelessWidget {
   final BreedModel breed;
   final VoidCallback onTap;
@@ -14,7 +16,7 @@ class DogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = breed.imageUrl;
+    final imageUrl = getImageUrl(breed.imageUrl);
     final tags = breed.temperamentTags.take(3).toList();
 
     return Card(
@@ -32,7 +34,7 @@ class DogCard extends StatelessWidget {
                   height: 190,
                   width: double.infinity,
                   color: Colors.amber.shade50,
-                  child: imageUrl != null
+                  child: imageUrl.isNotEmpty
                       ? Image.network(
                           imageUrl,
                           fit: BoxFit.cover,

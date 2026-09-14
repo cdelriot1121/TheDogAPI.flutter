@@ -4,6 +4,8 @@ import '../../data/models/breed_model.dart';
 import '../../data/models/dog_image_model.dart';
 import '../../data/services/dog_api_service.dart';
 
+import '../../../../core/utils/image_helper.dart';
+
 class DogDetailScreen extends StatefulWidget {
   final BreedModel breed;
 
@@ -50,7 +52,7 @@ class _DogDetailScreenState extends State<DogDetailScreen> {
                 minScale: 0.5,
                 maxScale: 4.0,
                 child: Image.network(
-                  imageUrl,
+                  getImageUrl(imageUrl),
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) => const Icon(
                     Icons.broken_image_rounded,
@@ -87,7 +89,8 @@ class _DogDetailScreenState extends State<DogDetailScreen> {
   @override
   Widget build(BuildContext context) {
     // Determine best image URL (prefer response from GET /images/{id} if retrieved, else breed.imageUrl)
-    final imageUrl = _imageDetail?.url ?? widget.breed.imageUrl;
+    final rawImageUrl = _imageDetail?.url ?? widget.breed.imageUrl;
+    final imageUrl = getImageUrl(rawImageUrl);
 
     return Scaffold(
       body: CustomScrollView(
@@ -110,7 +113,7 @@ class _DogDetailScreenState extends State<DogDetailScreen> {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  if (imageUrl != null)
+                  if (imageUrl.isNotEmpty)
                     GestureDetector(
                       onTap: () => _openFullImageDialog(imageUrl),
                       child: Image.network(
@@ -156,7 +159,7 @@ class _DogDetailScreenState extends State<DogDetailScreen> {
                   ),
 
                   // Floating Zoom Badge
-                  if (imageUrl != null)
+                  if (imageUrl.isNotEmpty)
                     Positioned(
                       bottom: 16,
                       right: 16,
